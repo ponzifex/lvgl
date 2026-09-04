@@ -358,6 +358,8 @@ static uint32_t lv_text_get_next_word(const char * txt, const lv_font_t * font,
  */
 static bool is_space_run(const char * txt, uint32_t len)
 {
+    LV_ASSERT(txt);
+
     if(len == 0) return false;
 
     for(uint32_t i = 0; i < len; i++) {
@@ -370,7 +372,7 @@ static bool is_space_run(const char * txt, uint32_t len)
 int32_t lv_text_get_line_width(const char * txt, uint32_t length, const lv_font_t * font,
                                const lv_text_attributes_t * attributes)
 {
-    if(txt == NULL) return 0;
+    LV_ASSERT(txt);
 
     /*length may reach past the end of the string, so find the real end first*/
     uint32_t len = 0;
@@ -430,6 +432,7 @@ uint32_t lv_text_get_next_line(const char * txt, uint32_t len,
             break;
         }
 
+        /*A space is only charged to the line if a word follows it on the same line*/
         if(is_space_run(&txt[i], advance)) {
             hanging_w += word_w;
         }
@@ -453,6 +456,7 @@ uint32_t lv_text_get_next_line(const char * txt, uint32_t len,
         }
     }
 
+    /*The text ran out, not the line: lv_spangroup continues it with the next span*/
     if(i >= len || txt[i] == '\0') {
         line_w += hanging_w;
     }
